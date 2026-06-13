@@ -53,6 +53,54 @@ The dashboard provides four operational views for phishing triage:
 
 **Attack Type Breakdown** — Pie chart splitting volume between credential harvesting (55%), business email compromise (10%), and clean/legitimate mail (35%). Shows the threat mix hitting the organization.
 
+## Analyst Workflow — Triage a Reported Phishing Email
+
+A step-by-step walkthrough of how an IR analyst would investigate a reported phishing email using this SIEM data.
+
+### Step 1 — Check the queue
+
+Open Discover and filter for unresolved HIGH-severity alerts to see what needs immediate attention:
+
+```
+analysis.risk_level : "HIGH"
+```
+
+Nine alerts in the queue. Start with the most recent.
+
+### Step 2 — Examine the sender
+
+Drill into a specific suspicious domain to see how many emails it sent:
+
+```
+email.sender_domain : "0ffice365-renewal.com"
+```
+
+One hit — but the domain is a typosquat of "office365." Flag it.
+
+### Step 3 — Check for campaign patterns
+
+Broaden the search to see if the same brand was impersonated from other domains:
+
+```
+analysis.brand_impersonated : "Microsoft"
+```
+
+Three results across two different spoofed domains (`m1crosoft-support.com` and `0ffice365-renewal.com`). This is a coordinated campaign, not a one-off.
+
+### Step 4 — Extract IOCs
+
+Pull all suspicious URLs from the campaign for blocklist submission:
+
+```
+analysis.brand_impersonated : "Microsoft" and analysis.url_flag_count > 0
+```
+
+IOCs identified: `http://bit.ly/3kF9wXq`, `http://10.0.0.5/ms/login`, `http://192.168.5.77/office/renew`, `http://bit.ly/3uVwXyZ`. These go to the threat intel team for blocklisting and to the email gateway for retroactive purge.
+
+### Step 5 — Classify and document
+
+The attack is credential harvesting via Microsoft brand impersonation using typosquatted domains and IP-based phishing URLs. Risk: HIGH. Escalate per the phishing response playbook.
+
 ## Data & Field Schema
 
 The dataset contains 30 phishing analysis log records structured in NDJSON format with the following fields:
@@ -100,6 +148,7 @@ This lab mirrors the daily workflow of an IR analyst handling reported phishing:
 | KQL filtering by risk level | **Alert triage** — working HIGH-severity incidents first |
 | KQL filtering by attack type | **Threat hunting** — proactively searching for BEC or credential-harvesting campaigns |
 | Compound queries (severity + brand) | **Campaign analysis** — correlating indicators to identify coordinated attacks |
+| Analyst workflow walkthrough | **Incident response methodology** — structured investigation from alert to escalation |
 | Dashboard visualizations | **Operational awareness** — monitoring phishing volume, trends, and brand-targeting patterns across the organization |
 
 ## Sample Data Attribution
