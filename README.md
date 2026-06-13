@@ -167,6 +167,15 @@ This project helped me understand how phishing detections become SIEM events, ho
 
 Building the dataset from scratch gave me a deeper understanding of log structure and field mapping. Structuring the data around Elastic Common Schema conventions showed me why standardized field names matter when you're writing queries across multiple data sources. And walking through the analyst workflow step by step made the connection between raw detection output and actionable triage decisions much more concrete.
 
+## Future Enhancements
+
+- Automate ingestion using Elastic Agent
+- Create detection rules that generate alerts automatically
+- Integrate threat intelligence enrichment for real-time IOC lookups
+- Build alerting workflows using Elastic Security rules
+- Expand the dataset with malware delivery and attachment-based phishing scenarios
+
+
 ## Sample Data Attribution
 
 All 30 log records are synthetic, generated specifically for this lab. No real phishing emails, threat intelligence feeds, or production SIEM data were used.
